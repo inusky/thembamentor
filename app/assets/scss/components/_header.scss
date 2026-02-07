@@ -1,0 +1,315 @@
+@use '../config/variables' as *;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 100%;
+  padding: 0.9rem 1rem;
+  background-color: $light;
+  z-index: 999;
+  position: sticky;
+  top: 0;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  opacity: 0.95;
+}
+
+.title-sel {
+  color: $black;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+
+  &:hover {
+    color: $blue-700;
+  }
+
+  .logo {
+    width: 4.2rem;
+    height: 4.2rem;
+    overflow: hidden;
+    img {
+      height: 4.2rem;
+      width: 4.2rem;
+    }
+  }
+
+  .sel {
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 0;
+      line-height: 1;
+    }
+
+    p {
+      font-family: $tagFont;
+      margin-top: 0;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      margin-left: 0;
+    }
+  }
+}
+
+.header__links {
+  order: 3;
+  width: 100%;
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding: 1rem 1.1rem;
+  background: $light;
+  border: 1px solid $grey-200;
+  border-radius: $radius;
+  box-shadow: $shadow-1;
+}
+
+.header__user {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-left: auto;
+}
+
+.user-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.user-links__avatar {
+  width: 2.4rem;
+  height: 2.4rem;
+  min-width: 2.4rem;
+  min-height: 2.4rem;
+  flex: 0 0 2.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: $grey-100;
+  border: 1px solid $grey-200;
+  overflow: hidden;
+}
+
+.user-links__avatar img {
+  display: block;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-links__icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  fill: $grey-800;
+}
+
+.nav-links {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1rem;
+  margin-left: 3rem;
+}
+
+.title-nav {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.nav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border: 1px solid $grey-300;
+  border-radius: 0.8rem;
+  background: $light;
+  box-shadow: $shadow-1;
+  color: $grey-900;
+  padding: 0;
+  cursor: pointer;
+}
+
+.nav-toggle__bar {
+  position: relative;
+  width: 1.6rem;
+  height: 2px;
+  background: $grey-900;
+  display: block;
+  transition: background 0.2s ease;
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: $grey-900;
+    transition: transform 0.2s ease;
+  }
+
+  &::before {
+    transform: translateY(-6px);
+  }
+
+  &::after {
+    transform: translateY(6px);
+  }
+}
+
+.nav-toggle:focus-visible {
+  outline: 2px solid $blue-500;
+  outline-offset: 3px;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle__bar {
+  background: transparent;
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle__bar::before {
+  transform: translateY(0) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded='true'] .nav-toggle__bar::after {
+  transform: translateY(0) rotate(-45deg);
+}
+
+.header__links.is-open {
+  display: flex;
+}
+
+.header__user {
+  order: 2;
+  margin-left: auto;
+}
+
+.user-links--auth {
+  display: none;
+}
+
+.nav-links a,
+.user-links a {
+  font-size: 1.4rem;
+}
+
+@media (min-width: $mobileP) {
+  .header {
+    padding: 1.2rem 1.5rem;
+  }
+
+  .title-sel {
+    gap: 1rem;
+  }
+
+  .nav-toggle {
+    width: 3.2rem;
+    height: 3.2rem;
+  }
+
+  .nav-links a,
+  .user-links a {
+    font-size: inherit;
+  }
+}
+
+@media (min-width: $mobileL) {
+  .header {
+    padding: 1.2rem 3rem;
+  }
+
+  .header__links {
+    padding: 1.2rem 1.4rem;
+  }
+
+  .title-sel .logo,
+  .title-sel .logo img {
+    width: 5rem;
+    height: 5rem;
+  }
+
+  .title-sel .sel h1 {
+    font-size: 2.5rem;
+  }
+
+  .title-sel .sel p {
+    font-size: 1.5rem;
+  }
+}
+
+@media (min-width: $tablet) {
+  .header {
+    padding: 1.4rem 8rem;
+    flex-wrap: nowrap;
+    gap: 2.5rem;
+  }
+
+  .title-nav {
+    flex: 0 1 auto;
+    justify-content: flex-start;
+    gap: 2rem;
+  }
+
+  .nav-toggle {
+    display: none;
+  }
+
+  .header__links {
+    order: 0;
+    width: auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2rem;
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .nav-links {
+    align-items: center;
+    flex-direction: row;
+    gap: 1.6rem;
+  }
+
+  .header__user {
+    order: 0;
+  }
+
+  .user-links--auth {
+    display: flex;
+  }
+
+  .title-sel .sel p {
+    margin-left: 3.5rem;
+  }
+}
+
+@media (min-width: $ebook) {
+  .header {
+    padding: 1.5rem 15rem;
+  }
+
+  .title-nav {
+    gap: 2.5rem;
+  }
+
+  .header__links {
+    gap: 2.5rem;
+  }
+
+  .nav-links {
+    gap: 2rem;
+  }
+}

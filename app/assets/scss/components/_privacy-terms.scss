@@ -1,0 +1,35 @@
+.legal {
+  padding: var(--s3) 0;
+}
+.legal__wrap {
+  width: var(--container);
+  margin-inline: auto;
+}
+.legal__card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  padding: clamp(1rem, 2.5vw, 1.6rem);
+}
+.legal__title {
+  font-size: var(--h2);
+  margin: 0 0 0.35rem;
+}
+.legal__meta {
+  margin: 0 0 1.25rem;
+  font-size: 1rem;
+}
+.legal h2 {
+  margin: 1.4rem 0 0.5rem;
+  font-size: 1.5rem;
+}
+.legal ul {
+  padding-left: 1.1rem;
+  margin: 0.5rem 0 0;
+}
+.legal a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

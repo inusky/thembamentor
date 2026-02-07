@@ -1,0 +1,15 @@
+@use 'variables' as *;
+
+@mixin glass {
+  background: $panel;
+  border: 1px solid $border;
+  border-radius: $r;
+  box-shadow: $shadow-2;
+  backdrop-filter: blur(10px);
+}
+
+@mixin container {
+  max-width: 80%;
+  margin: 0 auto;
+  margin-inline: auto;
+}

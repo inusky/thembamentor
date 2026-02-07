@@ -1,0 +1,88 @@
+// Here all the variables will be located, and these will be global to the whole app.
+// font-family: "Montserrat", sans-serif;
+// font-family: "Lato", sans-serif;
+// font-family: "Poppins", sans-serif;
+
+$titleFont: 'Montserrat', sans-serif;
+$tagFont: 'Lato', sans-serif;
+$contentFont: 'Poppins', sans-serif;
+
+$app-BG: #fafafa;
+// Backward-compatible alias for newer stylesheets.
+$bg: $app-BG;
+$grey-100: #f1f5f9;
+$grey-200: #e2e8f0;
+$grey-300: #cbd5e1;
+$grey-400: #94a3b8;
+$grey-500: #64748b;
+$grey-600: #475569;
+$grey-700: #334155;
+$grey-800: #1e293b;
+$grey-900: #0f172a;
+$blue-500: #2196f3;
+$blue-700: #1976d2;
+$blue-900: #0d47a1;
+$red: #f45d5d;
+$light: #fff;
+$black: #222;
+
+$radius: 0.4rem;
+$spacing: 1px;
+$transition: 0.3s ease-in-out all;
+
+$max-width: 80%;
+$fixed-width: 60rem;
+$small: 1.3rem;
+
+$shadow-1:
+  0 1px 3px 0 rgba(0, 0, 0, 0.1),
+  0 1px 2px 0 rgba(208, 201, 201, 0.06);
+
+$shadow-2:
+  0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+$shadow-3:
+  0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+$shadow-4:
+  0 20px 25px -5px rgba(0, 0, 0, 0.1),
+  0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+// Backward-compatible alias used by older mixins/components.
+$shadow: $shadow-2;
+
+$panel: rgba(255, 255, 255, 0.06);
+$text: rgba(255, 255, 255, 0.92);
+$muted: rgba(255, 255, 255, 0.7);
+$border: rgba(255, 255, 255, 0.12);
+
+/* fluid spacing + typography */
+$container: min(1120px, 100% - 2rem);
+$r: 18px;
+
+$h1: clamp(2rem, 3.4vw, 3.2rem);
+$h2: clamp(1.4rem, 2.4vw, 2.1rem);
+$p: clamp(1rem, 1.1vw, 1.08rem);
+
+$s-1: clamp(0.5rem, 0.8vw, 0.75rem);
+$s0: clamp(0.75rem, 1vw, 1rem);
+$s1: clamp(1rem, 1.6vw, 1.4rem);
+$s2: clamp(1.5rem, 2.5vw, 2.2rem);
+$s3: clamp(2rem, 4vw, 3.5rem);
+
+// Variables for Breakpoints
+// 1 em = 16px
+
+//80em = Max width for small desktop screens
+$ebook: 80em; // 1280px;
+
+//64em = Max width for tablets
+$tablet: 64em; // 1024px;
+
+// 48em = Max width for mobileL devices
+$mobileL: 48em; // 768px
+
+// 26em = Max width for mobileP devices
+$mobileP: 26em; // 416px

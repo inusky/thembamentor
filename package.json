@@ -10,14 +10,23 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@auth0/auth0-nuxt": "^1.0.0",
     "@nuxt/hints": "^1.0.0-alpha.6",
     "@nuxt/image": "^2.0.0",
-    "@prisma/client": "^6.19.2",
+    "@prisma/client": "^6.19.1",
+    "@prisma/nuxt": "^0.3.0",
+    "autoprefixer": "^10.4.23",
     "dotenv": "^17.2.3",
     "nuxt": "^4.3.0",
-    "prisma": "^6.19.2",
-    "sass": "^1.97.3",
-    "vue": "^3.5.27",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "prisma": "^6.19.1",
+    "sass": "^1.97.2",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^6.0.5",
     "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.6"
   }
 }

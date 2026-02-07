@@ -1,12 +1,4 @@
-*,
-*::after,
-*::before {
-  margin: 0;
-  padding: 0;
-  box-sizing: inherit;
-}
-
-html {
-  box-sizing: border-box;
-  font-size: 62.5%; // 1rem = 10px
-}
+@use 'config/base';
+@use 'config/mixin';
+@use 'config/reset';
+@use 'config/variables';
