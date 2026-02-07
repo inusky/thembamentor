@@ -3,10 +3,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
+    "build": "dotenv -e .env.production -- nuxt build",
+    "dev": "dotenv -e .env.local -- nuxt dev",
+    "generate": "dotenv -e .env.production -- nuxt generate",
+    "preview": "dotenv -e .env.production -- nuxt preview",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
@@ -27,6 +27,7 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
-    "@types/node": "^25.0.6"
+    "@types/node": "^25.0.6",
+    "dotenv-cli": "^11.0.0"
   }
 }
