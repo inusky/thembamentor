@@ -6,6 +6,10 @@
           <h1>The MBA Mentor</h1>
         </div>
       </NuxtLink>
+
+      <nav class="nav-links" aria-label="Primary navigation">
+        <NuxtLink to="/blogs">Blogs</NuxtLink>
+      </nav>
     </div>
 
     <div class="header__user">

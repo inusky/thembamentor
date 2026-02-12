@@ -28,3 +28,13 @@ model User {
   @@index([email])
   @@index([createdAt])
 }
+
+model Blog {
+  id        String   @id @default(cuid())
+  title     String
+  imageUrl  String?
+  description String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

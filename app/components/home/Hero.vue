@@ -2,62 +2,92 @@
   <section class="section hero">
     <div class="container hero__grid">
       <div class="hero__left">
-        <div class="badge">🎓 The MBA Mentor</div>
+        <h1 class="hero__title">Learning that inspires thinking, expression, and purpose.</h1>
 
-        <h1 class="hero__title">
-          MBA Guidance that feels clear, structured, and personal.
-        </h1>
+        <div class="hero__list">
+          <div class="hero__kicker">A space where...</div>
 
-        <p class="hero__subtitle">
-          Admissions, academics, and career support — designed for MBA aspirants
-          and students who want real mentorship, not generic advice.
-        </p>
+          <ul class="list">
+            <li class="list__item">
+              <span class="list__icon" aria-hidden="true">💡</span>
+              <span class="list__text">curiosity expressed</span>
+            </li>
+            <li class="list__item">
+              <span class="list__icon" aria-hidden="true">✨</span>
+              <span class="list__text">ideas made clear</span>
+            </li>
+            <li class="list__item">
+              <span class="list__icon" aria-hidden="true">🎯</span>
+              <span class="list__text">learning with purpose</span>
+            </li>
+          </ul>
 
-        <div class="hero__actions">
-          <a class="btn primary" href="#cta">Get Mentorship</a>
-          <a class="btn" href="#services">Explore Services</a>
-        </div>
-
-        <div class="hero__meta">
-          <div class="meta">
-            <div class="meta__k">1:1 Mentorship</div>
-            <div class="meta__v">Personal roadmap</div>
-          </div>
-          <div class="meta">
-            <div class="meta__k">Academic Support</div>
-            <div class="meta__v">Projects + exams</div>
-          </div>
-          <div class="meta">
-            <div class="meta__k">Career Prep</div>
-            <div class="meta__v">Resume + interview</div>
-          </div>
+          <p class="hero__note">
+            ... nurturing curiosity with clarity and confidence for every learner.
+          </p>
         </div>
       </div>
 
       <div class="hero__right">
-        <div class="mock">
-          <div class="mock__top">
-            <span class="dot"></span><span class="dot"></span
-            ><span class="dot"></span>
-          </div>
-          <div class="mock__body">
-            <div class="card">
-              <div class="card__title">Your MBA Roadmap</div>
-              <ul class="card__list">
-                <li>✅ Goal clarity</li>
-                <li>✅ College shortlist</li>
-                <li>✅ Profile building</li>
-                <li>✅ Interview prep</li>
-              </ul>
-            </div>
+        <div class="hero__rightInner">
+          <div class="hero__art" aria-hidden="true">
+            <!-- Lightweight inline illustration (no asset needed) -->
+            <svg
+              class="art"
+              viewBox="0 0 640 420"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <linearGradient id="g1" x1="140" y1="60" x2="420" y2="360" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#3B82F6" />
+                  <stop offset="1" stop-color="#FB7185" />
+                </linearGradient>
+                <linearGradient id="g2" x1="220" y1="80" x2="520" y2="360" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#22C55E" />
+                  <stop offset="1" stop-color="#60A5FA" />
+                </linearGradient>
+              </defs>
 
-            <div class="card alt">
-              <div class="card__title">Weekly Mentorship</div>
-              <p class="card__p">
-                Short, focused calls with tasks you can actually execute.
-              </p>
-            </div>
+              <!-- soft circles -->
+              <circle cx="520" cy="90" r="54" fill="#93C5FD" />
+              <circle cx="585" cy="145" r="38" fill="#A7F3D0" />
+              <circle cx="470" cy="150" r="34" fill="#FBCFE8" />
+
+              <!-- abstract device/book stack -->
+              <path
+                d="M260 320c0-42 34-76 76-76h150c42 0 76 34 76 76v10H260v-10Z"
+                fill="url(#g1)"
+              />
+              <path
+                d="M280 312c0-30 24-54 54-54h156c30 0 54 24 54 54v28H280v-28Z"
+                fill="url(#g2)"
+              />
+              <rect x="308" y="150" width="148" height="96" rx="18" fill="#94A3B8" />
+              <path
+                d="M330 220c22-18 44-18 66 0 22 18 44 18 66 0"
+                stroke="#64748B"
+                stroke-width="10"
+                stroke-linecap="round"
+              />
+
+              <!-- orbit scribble -->
+              <path
+                d="M420 170c-36 16-64 40-84 68-20 28-30 58-28 84"
+                stroke="#FB7185"
+                stroke-width="7"
+                stroke-linecap="round"
+              />
+              <path
+                d="M448 156c-40 20-72 48-96 82-24 34-36 70-34 100"
+                stroke="#F97316"
+                stroke-width="6"
+                stroke-linecap="round"
+              />
+            </svg>
           </div>
+
+          <a class="btn primary hero__cta" href="/signup">Join for free</a>
         </div>
       </div>
     </div>
@@ -66,96 +96,133 @@
 
 <style scoped lang="scss">
 @use '../../assets/scss/config/mixin' as *;
+@use '../../assets/scss/config/variables' as *;
 
 .hero {
-  padding-top: clamp(2.5rem, 6vw, 5rem);
+  /* Set --hero-bg-image: url('/path/to/image.jpg') when the asset is ready. */
+  --hero-bg-image: url('/hero-bg-dummy.svg');
+  --hero-bg-position: center bottom;
+  --hero-bg-size: auto;
+  --hero-bg-opacity: 0.1;
+
+  padding-top: clamp(3rem, 8vw, 6rem);
+  padding-bottom: clamp(3rem, 8vw, 6rem);
+  background-color: #ffffff;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--hero-bg-image);
+  background-position: var(--hero-bg-position);
+  background-size: var(--hero-bg-size);
+  background-repeat: no-repeat;
+  opacity: var(--hero-bg-opacity);
+  z-index: 0;
+  pointer-events: none;
 }
 
 .hero__grid {
   display: grid;
-  gap: 5rem;
   align-items: center;
+  min-height: clamp(24rem, 58vh, 36rem);
+  gap: clamp(2rem, 5vw, 5rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr));
+  justify-items: center; /* horizontally center grid children */
+  position: relative;
+  z-index: 1;
+}
 
-  /* ⭐ No media query needed: auto stacks on small screens */
-  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+.hero__left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .hero__title {
-  font-size: var(--h1);
-  line-height: 1.12;
-  margin: var(--s1) 0 var(--s0);
+  font-size: clamp(2.1rem, 3.6vw, 3.4rem);
   letter-spacing: -0.02em;
-  margin: 1rem 0;
+  margin: 0 0 1.2rem;
+  color: #111827;
+  max-width: 18ch;
 }
 
-.hero__subtitle {
-  font-size: var(--p);
-  color: var(--muted);
-  margin: 0 0 var(--s1);
-  max-width: 60ch;
-}
-
-.hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  margin: 1.1rem 0 1.4rem;
-}
-
-.hero__meta {
-  display: grid;
-  gap: 0.75rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-}
-
-.meta {
-  @include glass;
-  padding: 0.9rem 1rem;
-}
-.meta__k {
-  font-weight: 600;
-}
-.meta__v {
-  color: var(--muted);
-  font-size: 0.95rem;
-}
-
-.mock {
-  @include glass;
-  overflow: hidden;
-}
-.mock__top {
-  display: flex;
-  gap: 0.4rem;
-  padding: 0.8rem 1rem;
-  border-bottom: 1px solid var(--border);
-}
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.18);
-}
-.mock__body {
-  padding: 1rem;
-  display: grid;
-  gap: 1rem;
-}
-.card {
-  @include glass;
-  padding: 1rem;
-}
-.card__title {
-  font-weight: 700;
+.hero__kicker {
+  color: #2563eb;
   margin-bottom: 0.6rem;
 }
-.card__list {
-  margin: 0;
-  padding-left: 1.1rem;
-  color: var(--muted);
+
+.hero__note {
+  margin: 0.7rem 0 0;
+  color: #2563eb;
 }
-.card.alt .card__p {
+
+.list {
   margin: 0;
-  color: var(--muted);
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.list__item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  justify-content: flex-start;
+  color: #f97316;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.hero__right {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+
+.hero__rightInner {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* vertical centering within right column */
+  gap: 1.25rem;
+}
+
+.hero__art {
+  width: min(520px, 100%);
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+}
+
+.art {
+  width: 100%;
+  height: auto;
+  display: block;
+  opacity: 1;
+}
+
+/* keep your existing `.btn` look, but tune it for light hero */
+:deep(.btn) {
+  border-color: rgba(17, 24, 39, 0.12);
+  background: rgba(17, 24, 39, 0.04);
+  color: #111827;
+}
+:deep(.btn:hover) {
+  background: rgba(17, 24, 39, 0.06);
+}
+:deep(.btn.primary) {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.hero__cta {
+  padding: 0.95rem 1.25rem;
 }
 </style>
