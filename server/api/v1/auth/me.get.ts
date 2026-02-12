@@ -1,15 +1,3 @@
-export default defineEventHandler(async (event) => {
-  const auth0 = useAuth0(event);
-  const session = await auth0.getSession();
+import { handleAuthMe } from '../../../utils/authMe';
 
-  if (!session?.user) {
-    // Not logged in
-    return { authenticated: false, user: null };
-  }
-
-  // Logged in
-  return {
-    authenticated: true,
-    user: session.user,
-  };
-});
+export default defineEventHandler(handleAuthMe);

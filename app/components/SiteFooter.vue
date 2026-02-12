@@ -172,7 +172,11 @@ const year = new Date().getFullYear();
   flex-wrap: wrap;
   gap: 2rem;
 
-  &:hover {
+  .btn {
+    color: $blue-700;
+  }
+
+  .btn.primary {
     color: $blue-700;
   }
 }
