@@ -86,8 +86,6 @@
               />
             </svg>
           </div>
-
-          <a class="btn primary hero__cta" href="/signup">Join for free</a>
         </div>
       </div>
     </div>

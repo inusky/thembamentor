@@ -1,6 +1,5 @@
 import { Prisma, type User } from '@prisma/client';
 import type { H3Event } from 'h3';
-import { useAuth0 } from '#imports';
 import { prisma } from './prisma';
 
 type SessionUser = {
@@ -166,4 +165,3 @@ export async function syncAuthenticatedUser(event: H3Event): Promise<AuthUserSyn
     isFirstLogin,
   };
 }
-

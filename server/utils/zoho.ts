@@ -45,7 +45,9 @@ const ACCESS_TOKEN_EXPIRY_BUFFER_MS = 60_000;
 const IDEMPOTENT_ZOHO_CODES = new Set([
   // Keep this list small and explicit. Add account-specific duplicate codes here if needed.
   'already_exists',
+  'already_exist',
   'duplicate_data',
+  'duplicate',
 ]);
 
 export class ZohoApiError extends Error {
@@ -108,49 +110,183 @@ async function parseResponseBody(response: Response) {
 }
 
 function sanitizeZohoCode(payload: unknown) {
-  if (!payload || typeof payload !== 'object') return undefined;
+  const topLevel = readZohoCode(payload);
+  if (topLevel) return topLevel;
+
+  const firstRecordCode = getZohoRecords(payload)
+    .map((record) => readZohoCode(record))
+    .find(Boolean);
+
+  return firstRecordCode;
+}
+
+function isObjectRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function readZohoCode(payload: unknown) {
+  if (!isObjectRecord(payload)) return undefined;
   const maybeCode = (payload as ZohoApiResponse).code;
   if (maybeCode == null) return undefined;
   return String(maybeCode);
 }
 
-function looksLikeAlreadyExists(payload: unknown) {
-  if (!payload || typeof payload !== 'object') return false;
+function readZohoStatus(payload: unknown) {
+  if (!isObjectRecord(payload)) return '';
+  const maybeStatus = (payload as ZohoApiResponse).status;
+  return typeof maybeStatus === 'string' ? maybeStatus.toLowerCase() : '';
+}
 
-  const zohoPayload = payload as ZohoApiResponse;
-  const code = zohoPayload.code ? String(zohoPayload.code).toLowerCase() : '';
-  const message =
-    typeof zohoPayload.message === 'string'
-      ? zohoPayload.message.toLowerCase()
-      : '';
+function readZohoMessage(payload: unknown) {
+  if (!isObjectRecord(payload)) return '';
+  const maybeMessage = (payload as ZohoApiResponse).message;
+  return typeof maybeMessage === 'string' ? maybeMessage.toLowerCase() : '';
+}
 
-  if (IDEMPOTENT_ZOHO_CODES.has(code)) return true;
+function normalizeZohoCode(code: string | undefined) {
+  return code ? code.toLowerCase() : '';
+}
+
+function getZohoRecords(payload: unknown): ZohoApiResponse[] {
+  if (!isObjectRecord(payload)) return [];
+
+  const root = payload as Record<string, unknown>;
+  const records: ZohoApiResponse[] = [];
+
+  const candidates = [root.data, root.response];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) {
+      for (const entry of candidate) {
+        if (isObjectRecord(entry)) {
+          records.push(entry as ZohoApiResponse);
+        }
+      }
+      continue;
+    }
+
+    if (!isObjectRecord(candidate)) continue;
+
+    if (Array.isArray(candidate.data)) {
+      for (const entry of candidate.data) {
+        if (isObjectRecord(entry)) {
+          records.push(entry as ZohoApiResponse);
+        }
+      }
+      continue;
+    }
+
+    if (Array.isArray(candidate.result)) {
+      for (const entry of candidate.result) {
+        if (isObjectRecord(entry)) {
+          records.push(entry as ZohoApiResponse);
+        }
+      }
+      continue;
+    }
+
+    records.push(candidate as ZohoApiResponse);
+  }
+
+  return records;
+}
+
+function isZohoCodeSuccess(code: string) {
+  const normalizedCode = normalizeZohoCode(code);
+  return normalizedCode === '0' || normalizedCode === 'success';
+}
+
+function isZohoCodeIdempotent(code: string) {
+  return IDEMPOTENT_ZOHO_CODES.has(normalizeZohoCode(code));
+}
+
+function isZohoMessageIdempotent(message: string) {
   return (
     message.includes('already') &&
     (message.includes('exist') || message.includes('subscribed'))
   );
 }
 
-function isZohoSuccess(payload: unknown) {
-  if (!payload || typeof payload !== 'object') return false;
-  const zohoPayload = payload as ZohoApiResponse;
-  const code = zohoPayload.code == null ? '' : String(zohoPayload.code);
-  if (code === '0') return true;
+function isZohoRecordSuccess(record: ZohoApiResponse) {
+  const code = readZohoCode(record);
+  const status = readZohoStatus(record);
+  const message = readZohoMessage(record);
 
-  if (typeof zohoPayload.status === 'string') {
-    if (zohoPayload.status.toLowerCase() === 'success') return true;
-  }
-
-  const message =
-    typeof zohoPayload.message === 'string'
-      ? zohoPayload.message.toLowerCase()
-      : '';
+  if (code && isZohoCodeSuccess(code)) return true;
+  if (status === 'success') return true;
 
   return (
     message.includes('success') ||
     message.includes('created') ||
-    message.includes('updated')
+    message.includes('updated') ||
+    message.includes('added')
   );
+}
+
+function getFirstZohoRecordError(payload: unknown) {
+  const records = getZohoRecords(payload);
+
+  for (const record of records) {
+    const code = readZohoCode(record);
+    const status = readZohoStatus(record);
+    const message = readZohoMessage(record);
+
+    if (isZohoRecordSuccess(record)) continue;
+    if (code && isZohoCodeIdempotent(code)) continue;
+    if (isZohoMessageIdempotent(message)) continue;
+
+    if (status === 'error' || code || message) {
+      return {
+        code,
+        status,
+        message:
+          typeof record.message === 'string' ? record.message : 'Unknown Zoho error',
+        details: record.details,
+      };
+    }
+  }
+
+  return undefined;
+}
+
+function isZohoDevLoggingEnabled() {
+  return process.env.NODE_ENV !== 'production';
+}
+
+function looksLikeAlreadyExists(payload: unknown) {
+  const topCode = readZohoCode(payload);
+  const topMessage = readZohoMessage(payload);
+
+  if (topCode && isZohoCodeIdempotent(topCode)) return true;
+  if (isZohoMessageIdempotent(topMessage)) return true;
+
+  return getZohoRecords(payload).some((record) => {
+    const code = readZohoCode(record);
+    const message = readZohoMessage(record);
+    return (code && isZohoCodeIdempotent(code)) || isZohoMessageIdempotent(message);
+  });
+}
+
+function isZohoSuccess(payload: unknown) {
+  const code = readZohoCode(payload);
+  const status = readZohoStatus(payload);
+  const message = readZohoMessage(payload);
+
+  if (code && isZohoCodeSuccess(code)) return true;
+  if (status === 'success') return true;
+  if (
+    message.includes('success') ||
+    message.includes('created') ||
+    message.includes('updated') ||
+    message.includes('added')
+  ) {
+    return true;
+  }
+
+  const records = getZohoRecords(payload);
+  if (records.length === 0) return false;
+
+  return records.some((record) => isZohoRecordSuccess(record));
 }
 
 type ContactInfoFormat = 'json' | 'legacy';
@@ -311,28 +447,50 @@ export async function addSubscriberToZohoList(input: ZohoSubscribeInput) {
 }
 
 function handleSubscribeResponse(response: Response, payload: unknown) {
-  if (
-    response.ok &&
-    (isZohoSuccess(payload) || looksLikeAlreadyExists(payload))
-  ) {
+  if (isZohoDevLoggingEnabled()) {
+    console.info('[zoho] Parsed lead sync response', {
+      statusCode: response.status,
+      ok: response.ok,
+      payload,
+    });
+  }
+
+  const alreadyExists = looksLikeAlreadyExists(payload);
+  const success = isZohoSuccess(payload);
+
+  if (response.ok && (success || alreadyExists)) {
     return {
       ok: true as const,
-      alreadyExists: looksLikeAlreadyExists(payload),
+      alreadyExists,
     };
   }
 
-  if (looksLikeAlreadyExists(payload)) {
+  if (alreadyExists) {
     return {
       ok: true as const,
       alreadyExists: true,
     };
   }
 
+  const recordError = getFirstZohoRecordError(payload);
+  if (recordError) {
+    console.error('[zoho] Record-level lead sync error', {
+      statusCode: response.status,
+      code: recordError.code,
+      status: recordError.status,
+      message: recordError.message,
+      details: recordError.details,
+    });
+  }
+
   const zohoCode = sanitizeZohoCode(payload);
+  const errorMessage = recordError
+    ? `Zoho lead sync failed: ${recordError.message}`
+    : 'Zoho Campaigns subscribe API request failed';
 
   throw new ZohoApiError(
-    'Zoho Campaigns subscribe API request failed',
-    response.status || 502,
+    errorMessage,
+    response.ok ? 502 : response.status || 502,
     zohoCode,
   );
 }

@@ -80,6 +80,7 @@ const year = new Date().getFullYear();
 
 .footer {
   padding-top: 3rem;
+  margin-top: 2rem;
   border-top: 1px solid var(--border);
   background:
     /* LEFT light */

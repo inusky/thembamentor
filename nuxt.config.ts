@@ -12,7 +12,22 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     databaseUrl: process.env.DATABASE_URL ?? '',
+    zohoCampaigns: {
+      clientId: process.env.ZOHO_CLIENT_ID ?? '',
+      clientSecret: process.env.ZOHO_CLIENT_SECRET ?? '',
+      refreshToken: process.env.ZOHO_REFRESH_TOKEN ?? '',
+      listKey: process.env.ZOHO_CAMPAIGNS_LIST_KEY ?? '',
+      orgId: process.env.ZOHO_CAMPAIGNS_ORG_ID ?? '',
+      dc: process.env.ZOHO_DC ?? 'zoho.in',
+      baseUrl: process.env.ZOHO_CAMPAIGNS_BASE_URL ?? 'campaigns.zoho.in',
+    },
     clerkSecretKey: process.env.NUXT_CLERK_SECRET_KEY ?? '',
+    authPasswordlessResendCooldownSeconds:
+      process.env.AUTH_PASSWORDLESS_RESEND_COOLDOWN_SECONDS ?? '90',
+    authPasswordlessStateTtlSeconds:
+      process.env.AUTH_PASSWORDLESS_STATE_TTL_SECONDS ?? '600',
+    authPasswordlessSuccessTtlSeconds:
+      process.env.AUTH_PASSWORDLESS_SUCCESS_TTL_SECONDS ?? '120',
     auth0: {
       domain: process.env.AUTH0_DOMAIN ?? '',
       clientId: process.env.AUTH0_CLIENT_ID ?? '',

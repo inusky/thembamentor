@@ -1,17 +1,54 @@
 import { parse, serialize } from 'cookie';
-import type { H3Event } from 'h3';
+import { appendHeader, getHeader, type H3Event } from 'h3';
 
-const prod = process.env.NODE_ENV === 'production';
-const opts = {
-  httpOnly: true,
-  secure: prod,
-  sameSite: 'lax' as const,
-  path: '/',
-};
+export const PASSWORDLESS_SUCCESS_COOKIE = 'pwl_success';
+
+function cookieBaseOptions() {
+  const prod = process.env.NODE_ENV === 'production';
+
+  return {
+    secure: prod,
+    sameSite: 'lax' as const,
+    path: '/',
+  };
+}
+
+function appendSetCookie(event: H3Event, value: string) {
+  appendHeader(event, 'Set-Cookie', value);
+}
+
+export function setPasswordlessSuccessCookie(event: H3Event, ttlSeconds: number) {
+  appendSetCookie(
+    event,
+    serialize(PASSWORDLESS_SUCCESS_COOKIE, '1', {
+      ...cookieBaseOptions(),
+      httpOnly: false,
+      maxAge: ttlSeconds,
+    }),
+  );
+}
+
+export function clearPasswordlessSuccessCookie(event: H3Event) {
+  appendSetCookie(
+    event,
+    serialize(PASSWORDLESS_SUCCESS_COOKIE, '', {
+      ...cookieBaseOptions(),
+      httpOnly: false,
+      expires: new Date(0),
+    }),
+  );
+}
 
 export function setAuthTemp(event: H3Event, data: Record<string, string>) {
-  const set = Object.entries(data).map(([k, v]) => serialize(k, v, opts));
-  setHeader(event, 'Set-Cookie', set);
+  for (const [key, value] of Object.entries(data)) {
+    appendSetCookie(
+      event,
+      serialize(key, value, {
+        ...cookieBaseOptions(),
+        httpOnly: true,
+      }),
+    );
+  }
 }
 
 export function readAuthTemp(event: H3Event) {
@@ -19,8 +56,14 @@ export function readAuthTemp(event: H3Event) {
 }
 
 export function clearAuthTemp(event: H3Event, keys: string[]) {
-  const set = keys.map((k) =>
-    serialize(k, '', { path: '/', expires: new Date(0) }),
-  );
-  setHeader(event, 'Set-Cookie', set);
+  for (const key of keys) {
+    appendSetCookie(
+      event,
+      serialize(key, '', {
+        ...cookieBaseOptions(),
+        httpOnly: true,
+        expires: new Date(0),
+      }),
+    );
+  }
 }
