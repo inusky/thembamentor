@@ -2,11 +2,14 @@
   <section class="section lead-register" aria-labelledby="lead-register-title">
     <div class="container lead-register__wrap">
       <div class="lead-register__copy">
-        <h2 id="lead-register-title">Your MBA.
+        <h2 id="lead-register-title">
+          Your MBA.
           <br />
-        Guided by Experts.</h2>
+          Guided by Experts.
+        </h2>
         <p>
-          Get personalized admission guidance, fee clarity, and AI-powered curriculum insights.
+          Get personalized admission guidance, fee clarity, and AI-powered
+          curriculum insights.
         </p>
         <ul class="lead-register__credibility" aria-label="Credibility points">
           <li>AI-Integrated MBA Curriculum</li>
@@ -30,7 +33,10 @@
         />
 
         <label for="lead-email">Email Address</label>
-        <p id="lead-email-help" class="lead-register__helper lead-register__helper--email">
+        <p
+          id="lead-email-help"
+          class="lead-register__helper lead-register__helper--email"
+        >
           We'll email you a confirmation link.
         </p>
         <input
@@ -42,11 +48,16 @@
           maxlength="254"
           placeholder="you@example.com"
           :aria-invalid="invalidEmail ? 'true' : 'false'"
-          :aria-describedby="invalidEmail ? 'lead-email-help lead-form-message' : 'lead-email-help'"
+          :aria-describedby="
+            invalidEmail
+              ? 'lead-email-help lead-form-message'
+              : 'lead-email-help'
+          "
         />
 
         <label for="lead-phone">
-          Mobile Number <span class="lead-register__label-meta">(Recommended)</span>
+          Mobile Number
+          <span class="lead-register__label-meta">(Recommended)</span>
         </label>
         <p class="lead-register__helper">For priority admission guidance.</p>
         <input
@@ -160,6 +171,13 @@ async function submitLead() {
     });
 
     if (response?.ok) {
+      // @ts-ignore
+      window.gtag?.('event', 'generate_lead', {
+        form_name: 'mba_admission_form',
+        value: 1,
+        currency: 'INR',
+      });
+
       window.location.assign('/thank-you?source=lead');
       return;
     }

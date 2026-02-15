@@ -8,6 +8,21 @@ export default defineNuxtConfig({
     head: {
       title: 'The MBA Mentor',
       link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+      script: [
+        {
+          src: 'https://www.googletagmanager.com/gtag/js?id=G-DRQ7D058H6',
+          async: true,
+        },
+        {
+          innerHTML: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            // IMPORTANT for Nuxt/Vue SPA: disable automatic page_view here
+            gtag('config', 'G-DRQ7D058H6', { send_page_view: false });
+          `,
+        },
+      ],
     },
   },
   runtimeConfig: {
@@ -41,6 +56,8 @@ export default defineNuxtConfig({
     },
     public: {
       maintenanceMode: process.env.NUXT_PUBLIC_MAINTENANCE_MODE || 'false',
+      gaMeasurementId:
+        process.env.NUXT_PUBLIC_GA_MEASUREMENT_ID || 'G-DRQ7D058H6',
     },
   },
   nitro: {
