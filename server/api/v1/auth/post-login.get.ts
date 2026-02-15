@@ -1,9 +1,5 @@
 import { defineEventHandler, getQuery, sendRedirect } from 'h3';
-import {
-  getPasswordlessSuccessTtlSeconds,
-  syncUserZohoSubscribedFromLead,
-} from '../../../utils/leadRegistration';
-import { setPasswordlessSuccessCookie } from '../../../utils/authCookies';
+import { syncUserZohoSubscribedFromLead } from '../../../utils/leadRegistration';
 import { syncAuthenticatedUser } from '../../../utils/authUserSync';
 
 export default defineEventHandler(async (event) => {
@@ -35,8 +31,6 @@ export default defineEventHandler(async (event) => {
       message: error instanceof Error ? error.message : 'Unknown error',
     });
   }
-
-  setPasswordlessSuccessCookie(event, getPasswordlessSuccessTtlSeconds());
 
   return sendRedirect(event, '/');
 });

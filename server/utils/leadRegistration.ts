@@ -4,8 +4,6 @@ import { prisma } from './prisma';
 const EMAIL_REGEX =
   /^(?=.{1,254}$)(?=.{1,64}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/;
 
-export const CHECK_EMAIL_MESSAGE = 'Check your email to continue.';
-
 function cleanString(value: unknown, maxLength = 120) {
   if (typeof value !== 'string') return undefined;
   const trimmed = value.trim();
@@ -42,28 +40,6 @@ export function getPasswordlessCooldownSeconds() {
 
   if (!Number.isFinite(value) || value <= 0) {
     return 90;
-  }
-
-  return Math.floor(value);
-}
-
-export function getPasswordlessStateTtlSeconds() {
-  const config = useRuntimeConfig();
-  const value = Number(config.authPasswordlessStateTtlSeconds ?? 600);
-
-  if (!Number.isFinite(value) || value <= 30) {
-    return 600;
-  }
-
-  return Math.floor(value);
-}
-
-export function getPasswordlessSuccessTtlSeconds() {
-  const config = useRuntimeConfig();
-  const value = Number(config.authPasswordlessSuccessTtlSeconds ?? 120);
-
-  if (!Number.isFinite(value) || value <= 0) {
-    return 120;
   }
 
   return Math.floor(value);

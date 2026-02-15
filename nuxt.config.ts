@@ -21,13 +21,8 @@ export default defineNuxtConfig({
       dc: process.env.ZOHO_DC ?? 'zoho.in',
       baseUrl: process.env.ZOHO_CAMPAIGNS_BASE_URL ?? 'campaigns.zoho.in',
     },
-    clerkSecretKey: process.env.NUXT_CLERK_SECRET_KEY ?? '',
     authPasswordlessResendCooldownSeconds:
       process.env.AUTH_PASSWORDLESS_RESEND_COOLDOWN_SECONDS ?? '90',
-    authPasswordlessStateTtlSeconds:
-      process.env.AUTH_PASSWORDLESS_STATE_TTL_SECONDS ?? '600',
-    authPasswordlessSuccessTtlSeconds:
-      process.env.AUTH_PASSWORDLESS_SUCCESS_TTL_SECONDS ?? '120',
     auth0: {
       domain: process.env.AUTH0_DOMAIN ?? '',
       clientId: process.env.AUTH0_CLIENT_ID ?? '',
@@ -45,11 +40,8 @@ export default defineNuxtConfig({
       },
     },
     public: {
-      clerkPublishableKey: process.env.NUXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? '',
       maintenanceMode: process.env.NUXT_PUBLIC_MAINTENANCE_MODE || 'false',
     },
-    authSessionPassword: process.env.AUTH_SESSION_PASSWORD ?? '',
-    authCookieName: process.env.AUTH_COOKIE_NAME || 'skyinnk_auth',
   },
   nitro: {
     preset: 'node-server',

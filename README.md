@@ -85,7 +85,6 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 ### Callback ownership
 
 - `/auth/callback` stays owned by `@auth0/auth0-nuxt`.
-- Passwordless callback state is validated in `server/middleware/01-passwordless-callback-guard.ts` only when the `pwl_guard` cookie is present.
 
 ### Required environment variables
 
@@ -93,7 +92,6 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 - `AUTH0_CLIENT_ID`
 - `AUTH0_CLIENT_SECRET`
 - `AUTH0_APP_BASE_URL`
-- `AUTH_SESSION_PASSWORD`
 - `ZOHO_CLIENT_ID`
 - `ZOHO_CLIENT_SECRET`
 - `ZOHO_REFRESH_TOKEN`
@@ -102,8 +100,6 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 ### Optional environment variables
 
 - `AUTH_PASSWORDLESS_RESEND_COOLDOWN_SECONDS` (default: `90`)
-- `AUTH_PASSWORDLESS_STATE_TTL_SECONDS` (default: `600`)
-- `AUTH_PASSWORDLESS_SUCCESS_TTL_SECONDS` (default: `120`)
 - `ZOHO_DC` (default: `zoho.in`)
 - `ZOHO_CAMPAIGNS_BASE_URL` (default: `campaigns.zoho.in`)
 - `TEST_MODE`
