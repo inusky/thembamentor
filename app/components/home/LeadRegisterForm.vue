@@ -18,7 +18,11 @@
         </ul>
       </div>
 
-      <form class="lead-register__form" @submit.prevent="submitLead">
+      <form
+        ref="formRef"
+        class="lead-register__form"
+        @submit.prevent="submitLead"
+      >
         <label for="lead-name">Full Name</label>
         <input
           id="lead-name"
@@ -82,6 +86,17 @@
           />
         </div>
 
+        <div v-if="turnstileSiteKey" class="lead-register__turnstile">
+          <div
+            class="cf-turnstile"
+            :data-sitekey="turnstileSiteKey"
+            data-theme="light"
+            data-callback="onLeadTurnstileSuccess"
+            data-expired-callback="onLeadTurnstileExpired"
+            data-error-callback="onLeadTurnstileError"
+          />
+        </div>
+
         <button class="btn primary" type="submit" :disabled="pending">
           {{ pending ? 'Submitting...' : 'Get My Personalized MBA Plan' }}
         </button>
@@ -104,11 +119,39 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 
 type LeadResponse = {
   ok?: boolean;
+  error?: string;
 };
+
+type TurnstileWindow = Window & {
+  onLeadTurnstileSuccess?: (token: string) => void;
+  onLeadTurnstileExpired?: () => void;
+  onLeadTurnstileError?: (code?: string) => void;
+  turnstile?: {
+    reset: () => void;
+  };
+};
+
+const {
+  public: { turnstileSiteKey },
+} = useRuntimeConfig();
+
+if (turnstileSiteKey) {
+  useHead({
+    script: [
+      {
+        src: 'https://challenges.cloudflare.com/turnstile/v0/api.js',
+        async: true,
+        defer: true,
+      },
+    ],
+  });
+}
+
+const formRef = ref<HTMLFormElement | null>(null);
 
 const form = reactive({
   name: '',
@@ -119,9 +162,77 @@ const form = reactive({
 
 const pending = ref(false);
 const message = ref('');
+const turnstileToken = ref('');
 const invalidName = ref(false);
 const invalidEmail = ref(false);
 const invalidPhone = ref(false);
+
+function readTurnstileTokenFromForm() {
+  const input = formRef.value?.querySelector<HTMLInputElement>(
+    'input[name="cf-turnstile-response"]',
+  );
+
+  return input?.value.trim() || '';
+}
+
+function resetTurnstile() {
+  turnstileToken.value = '';
+
+  if (typeof window === 'undefined') return;
+
+  const turnstileWindow = window as TurnstileWindow;
+  turnstileWindow.turnstile?.reset();
+}
+
+onMounted(() => {
+  if (!turnstileSiteKey || typeof window === 'undefined') return;
+
+  const turnstileWindow = window as TurnstileWindow;
+
+  turnstileWindow.onLeadTurnstileSuccess = (token: string) => {
+    turnstileToken.value = token;
+
+    if (
+      message.value === 'Please complete the Cloudflare Turnstile check.' ||
+      message.value === 'Turnstile expired. Please complete the check again.' ||
+      message.value === 'Turnstile failed to load. Please refresh and try again.' ||
+      message.value ===
+        'Turnstile site key is not valid for this domain. Use a localhost/test key.'
+    ) {
+      message.value = '';
+    }
+  };
+
+  turnstileWindow.onLeadTurnstileExpired = () => {
+    turnstileToken.value = '';
+    message.value = 'Turnstile expired. Please complete the check again.';
+  };
+
+  turnstileWindow.onLeadTurnstileError = (code) => {
+    turnstileToken.value = '';
+    if (code === '110200') {
+      message.value =
+        'Turnstile site key is not valid for this domain. Use a localhost/test key.';
+      return;
+    }
+
+    message.value = 'Turnstile failed to load. Please refresh and try again.';
+  };
+
+  const tokenFromField = readTurnstileTokenFromForm();
+  if (tokenFromField) {
+    turnstileToken.value = tokenFromField;
+  }
+});
+
+onBeforeUnmount(() => {
+  if (typeof window === 'undefined') return;
+
+  const turnstileWindow = window as TurnstileWindow;
+  delete turnstileWindow.onLeadTurnstileSuccess;
+  delete turnstileWindow.onLeadTurnstileExpired;
+  delete turnstileWindow.onLeadTurnstileError;
+});
 
 function isValidName(name: string) {
   return name.trim().length >= 2;
@@ -138,6 +249,16 @@ function isValidPhone(phone: string) {
 
   const digitCount = value.replace(/\D/g, '').length;
   return digitCount >= 7 && digitCount <= 15;
+}
+
+function getApiErrorMessage(error: unknown) {
+  if (!error || typeof error !== 'object') return '';
+
+  const payload = (error as { data?: unknown }).data;
+  if (!payload || typeof payload !== 'object') return '';
+
+  const value = (payload as { error?: unknown }).error;
+  return typeof value === 'string' ? value : '';
 }
 
 async function submitLead() {
@@ -157,6 +278,17 @@ async function submitLead() {
     return;
   }
 
+  if (!turnstileSiteKey) {
+    message.value = 'Security verification is unavailable. Please try again later.';
+    return;
+  }
+
+  turnstileToken.value = readTurnstileTokenFromForm() || turnstileToken.value;
+  if (!turnstileToken.value) {
+    message.value = 'Please complete the Cloudflare Turnstile check.';
+    return;
+  }
+
   pending.value = true;
 
   try {
@@ -167,6 +299,7 @@ async function submitLead() {
         email: normalizedEmail,
         phone: normalizedPhone,
         hp: form.hp,
+        turnstileToken: turnstileToken.value,
       },
     });
 
@@ -202,9 +335,14 @@ async function submitLead() {
       return;
     }
 
-    message.value = 'We couldn\u2019t submit right now. Please try again.';
-  } catch {
-    message.value = 'We couldn\u2019t submit right now. Please try again.';
+    message.value =
+      response?.error || 'We couldn\u2019t submit right now. Please try again.';
+    resetTurnstile();
+  } catch (error) {
+    message.value =
+      getApiErrorMessage(error) ||
+      'We couldn\u2019t submit right now. Please try again.';
+    resetTurnstile();
   } finally {
     pending.value = false;
   }
@@ -378,6 +516,11 @@ async function submitLead() {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.lead-register__turnstile {
+  margin-top: 0.42rem;
+  display: inline-flex;
 }
 
 .lead-register__form .btn {

@@ -74,18 +74,6 @@ bun run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-## Passwordless Lead Flow
-
-### Endpoints
-
-- `POST /api/v1/auth/passwordless-start`
-- `POST /api/v1/auth/retry`
-- `GET /api/v1/auth/post-login`
-
-### Callback ownership
-
-- `/auth/callback` stays owned by `@auth0/auth0-nuxt`.
-
 ### Required environment variables
 
 - `AUTH0_DOMAIN`
@@ -96,6 +84,8 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 - `ZOHO_CLIENT_SECRET`
 - `ZOHO_REFRESH_TOKEN`
 - `ZOHO_CAMPAIGNS_LIST_KEY`
+- `TURNSTILE_SECRET_KEY`
+- `NUXT_PUBLIC_TURNSTILE_SITE_KEY`
 
 ### Optional environment variables
 
@@ -103,3 +93,10 @@ Check out the [deployment documentation](https://nuxt.com/docs/getting-started/d
 - `ZOHO_DC` (default: `zoho.in`)
 - `ZOHO_CAMPAIGNS_BASE_URL` (default: `campaigns.zoho.in`)
 - `TEST_MODE`
+
+### Cloudflare Turnstile
+
+- Add your site domain(s) to a Turnstile widget in Cloudflare.
+- Set `NUXT_PUBLIC_TURNSTILE_SITE_KEY` and `TURNSTILE_SECRET_KEY`.
+- Lead submissions are verified server-side via Turnstile before processing.
+- For local `http://localhost:3000`, use Cloudflare test keys or allow `localhost` in your widget domain settings.

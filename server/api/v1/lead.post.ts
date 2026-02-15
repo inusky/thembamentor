@@ -1,4 +1,9 @@
-import { defineEventHandler, readBody } from 'h3';
+import {
+  defineEventHandler,
+  readBody,
+  setResponseStatus,
+  type H3Event,
+} from 'h3';
 import {
   markLeadZohoFailed,
   markLeadZohoSynced,
@@ -13,17 +18,35 @@ import {
   subscribeZohoList,
   ZohoSubscribeError,
 } from '../../utils/zohoSubscribe';
+import { isTurnstileEnabled, verifyTurnstileToken } from '../../utils/turnstile';
 
 type LeadBody = {
   name?: unknown;
   email?: unknown;
   phone?: unknown;
   hp?: unknown;
+  turnstileToken?: unknown;
 };
 
 function genericSuccess() {
   return {
     ok: true as const,
+  };
+}
+
+function badRequest(event: H3Event, error: string) {
+  setResponseStatus(event, 400);
+  return {
+    ok: false as const,
+    error,
+  };
+}
+
+function serviceUnavailable(event: H3Event, error: string) {
+  setResponseStatus(event, 503);
+  return {
+    ok: false as const,
+    error,
   };
 }
 
@@ -43,6 +66,22 @@ export default defineEventHandler(async (event) => {
   const honeypot = normalizeHoneypot(body.hp);
   if (honeypot) {
     return genericSuccess();
+  }
+
+  if (!isTurnstileEnabled(event)) {
+    return serviceUnavailable(
+      event,
+      'Security verification is unavailable. Please try again later.',
+    );
+  }
+
+  if (typeof body.turnstileToken !== 'string' || !body.turnstileToken.trim()) {
+    return badRequest(event, 'Please complete the Cloudflare Turnstile check.');
+  }
+
+  const isHuman = await verifyTurnstileToken(event, body.turnstileToken);
+  if (!isHuman) {
+    return badRequest(event, 'Turnstile verification failed. Please try again.');
   }
 
   const name = normalizeName(body.name);

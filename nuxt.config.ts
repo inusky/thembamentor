@@ -27,6 +27,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     databaseUrl: process.env.DATABASE_URL ?? '',
+    turnstileSecretKey: process.env.TURNSTILE_SECRET_KEY ?? '',
     zohoCampaigns: {
       clientId: process.env.ZOHO_CLIENT_ID ?? '',
       clientSecret: process.env.ZOHO_CLIENT_SECRET ?? '',
@@ -58,6 +59,7 @@ export default defineNuxtConfig({
       maintenanceMode: process.env.NUXT_PUBLIC_MAINTENANCE_MODE || 'false',
       gaMeasurementId:
         process.env.NUXT_PUBLIC_GA_MEASUREMENT_ID || 'G-DRQ7D058H6',
+      turnstileSiteKey: process.env.NUXT_PUBLIC_TURNSTILE_SITE_KEY ?? '',
     },
   },
   nitro: {
