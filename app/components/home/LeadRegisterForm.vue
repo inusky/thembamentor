@@ -171,14 +171,34 @@ async function submitLead() {
     });
 
     if (response?.ok) {
-      // @ts-ignore
-      window.gtag?.('event', 'generate_lead', {
-        form_name: 'mba_admission_form',
-        value: 1,
-        currency: 'INR',
-      });
+      const go = () => window.location.assign('/thank-you?source=lead');
 
-      window.location.assign('/thank-you?source=lead');
+      // @ts-ignore
+      if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+        let redirected = false;
+
+        // @ts-ignore
+        window.gtag?.('event', 'generate_lead', {
+          form_name: 'mba_admission_form',
+          value: 1,
+          currency: 'INR',
+          event_callback: () => {
+            if (redirected) return;
+            redirected = true;
+            go();
+          },
+        });
+
+        setTimeout(() => {
+          if (redirected) return;
+          redirected = true;
+          go();
+        }, 800);
+
+        return;
+      }
+
+      go();
       return;
     }
 
