@@ -103,6 +103,17 @@
         <p class="lead-register__trust">
           🔒 100% Confidential. No spam. Direct admission support.
         </p>
+        <p class="lead-register__trust lead-register__fallback">
+          🔁 <strong style="margin-right: 0.4rem;">Having trouble submitting the form?</strong>
+          <a
+            class="lead-register__fallbackLink"
+            href="https://zcmp.in/3FYF"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="trackFallbackClick"
+            >Use our quick sign-up link.</a
+          >
+        </p>
 
         <p
           id="lead-form-message"
@@ -259,6 +270,26 @@ function getApiErrorMessage(error: unknown) {
 
   const value = (payload as { error?: unknown }).error;
   return typeof value === 'string' ? value : '';
+}
+
+function trackFallbackClick() {
+  if (typeof window === 'undefined') return;
+
+  const gtag = (
+    window as Window & {
+      gtag?: (
+        command: 'event',
+        eventName: string,
+        params?: Record<string, string>,
+      ) => void;
+    }
+  ).gtag;
+
+  gtag?.('event', 'fallback_signup_click', {
+    link_url: 'https://zcmp.in/3FYF',
+    placement: 'lead_form_footer',
+    destination: 'zoho_signup_page',
+  });
 }
 
 async function submitLead() {
@@ -561,6 +592,15 @@ async function submitLead() {
   font-size: 0.74rem;
   line-height: 1.35;
   color: #64748b;
+}
+
+.lead-register__fallback {
+  color: #77889e;
+}
+
+.lead-register__fallbackLink {
+  color: inherit;
+  text-decoration: underline;
 }
 
 .lead-register__honeypot {
