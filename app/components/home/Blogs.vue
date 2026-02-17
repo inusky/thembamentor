@@ -132,11 +132,17 @@ const orderedBlogs = computed(() => data.value ?? []);
 
 .blogs__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 320px));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
   gap: 1rem;
   width: 100%;
   align-items: start;
   justify-content: start;
+}
+
+@media (min-width: 1024px) {
+  .blogs__grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 320px));
+  }
 }
 
 @media (max-width: 960px) {

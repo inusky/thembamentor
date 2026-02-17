@@ -7,14 +7,26 @@
         </div>
       </NuxtLink>
 
-      <nav class="nav-links" aria-label="Primary navigation">
-        <NuxtLink to="/blogs">Blogs</NuxtLink>
-      </nav>
+      <button
+        class="nav-toggle"
+        type="button"
+        :aria-expanded="isMenuOpen"
+        :aria-controls="menuId"
+        aria-label="Toggle navigation menu"
+        @click="toggleMenu"
+      >
+        <span class="nav-toggle__label">Menu</span>
+        <span class="nav-toggle__bar" aria-hidden="true" />
+      </button>
     </div>
 
-    <div class="header__user">
-      <nav v-if="isSignedOut" class="user-links user-links--auth">
-        <NuxtLink to="/auth/sign-in">Sign in</NuxtLink>
+    <div :id="menuId" class="header__links" :class="{ 'is-open': isMenuOpen }">
+      <nav class="nav-links" aria-label="Primary navigation">
+        <NuxtLink to="/blogs" @click="closeMenu">Blogs</NuxtLink>
+      </nav>
+
+      <nav v-if="isSignedOut" class="user-links user-links--auth user-links--sign-in">
+        <NuxtLink to="/auth/sign-in" @click="closeMenu">Sign in</NuxtLink>
       </nav>
 
       <nav v-else-if="isSignedIn" class="user-links user-links--auth">
@@ -37,17 +49,34 @@
             />
           </svg>
         </span>
-        <a href="/auth/logout">Sign out</a>
+        <a href="/auth/logout" @click="closeMenu">Sign out</a>
       </nav>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 const isMenuOpen = ref(false);
+const menuId = 'site-header-links';
+const route = useRoute();
 const { isSignedIn, isSignedOut, displayName, me } = useAuthState();
+
+const closeMenu = () => {
+  isMenuOpen.value = false;
+};
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
+watch(
+  () => route.fullPath,
+  () => {
+    closeMenu();
+  },
+);
 </script>
 
 <style scoped lang="scss">
