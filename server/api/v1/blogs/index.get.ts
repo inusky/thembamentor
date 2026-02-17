@@ -1,8 +1,9 @@
 import { defineEventHandler } from 'h3';
+import { normalizeImageUrl } from '~~/server/utils/image';
 import { prisma } from '~~/server/utils/prisma';
 
 export default defineEventHandler(async () => {
-  return prisma.blog.findMany({
+  const blogs = await prisma.blog.findMany({
     select: {
       id: true,
       title: true,
@@ -20,4 +21,9 @@ export default defineEventHandler(async () => {
       },
     ],
   });
+
+  return blogs.map((blog) => ({
+    ...blog,
+    imageUrl: normalizeImageUrl(blog.imageUrl),
+  }));
 });

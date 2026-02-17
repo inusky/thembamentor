@@ -1,4 +1,5 @@
 import { prisma } from '~~/server/utils/prisma';
+import { normalizeImageUrl } from '~~/server/utils/image';
 
 export default defineEventHandler(async (event) => {
   const { id }: any = event.context.params
@@ -18,5 +19,10 @@ export default defineEventHandler(async (event) => {
     },
   });
 
-  return blog;
+  if (!blog) return blog;
+
+  return {
+    ...blog,
+    imageUrl: normalizeImageUrl(blog.imageUrl),
+  };
 });
