@@ -1,6 +1,6 @@
 <template>
   <section class="section lead-register" aria-labelledby="lead-register-title">
-    <div class="container lead-register__wrap">
+    <div class="lead-register__wrap">
       <div class="lead-register__copy">
         <h2 id="lead-register-title">
           Your MBA.
@@ -90,6 +90,7 @@
           <div
             class="cf-turnstile"
             :data-sitekey="turnstileSiteKey"
+            data-size="flexible"
             data-theme="light"
             data-callback="onLeadTurnstileSuccess"
             data-expired-callback="onLeadTurnstileExpired"
@@ -403,7 +404,7 @@ async function submitLead() {
 .lead-register__wrap {
   display: grid;
   gap: clamp(0.95rem, 2vw, 1.45rem);
-  width: 100%;
+  width: min(1120px, calc(100% - 2rem));
   max-width: 1120px;
   margin-inline: auto;
   padding: clamp(1.25rem, 2.8vw, 2.3rem);
@@ -551,7 +552,13 @@ async function submitLead() {
 
 .lead-register__turnstile {
   margin-top: 0.42rem;
-  display: inline-flex;
+  display: flex;
+  width: 100%;
+}
+
+.lead-register__turnstile :deep(.cf-turnstile) {
+  width: 100%;
+  max-width: 100%;
 }
 
 .lead-register__form .btn {

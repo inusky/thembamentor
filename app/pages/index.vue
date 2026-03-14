@@ -1,10 +1,7 @@
 <template>
   <HomeHero />
   <HomeBlogs />
-
-  <div class="container">
-    <HomeLeadRegisterForm />
-  </div>
+  <HomeLeadRegisterForm />
 </template>
 
 <script setup lang="ts">
